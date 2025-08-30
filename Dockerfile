@@ -16,11 +16,9 @@ RUN pip install --no-cache-dir \
     opencv-python-headless==4.9.0.80 \
     numpy==1.26.4
 
-# Copy model and code into container
-COPY tinyvit_student_final_synthetic.keras .
-COPY main.py .
-COPY A_test.jpg .
+# Copy project files
+COPY . .
 
-# Run the script
+# Default command
 CMD ["python", "main.py"]
 

@@ -17,20 +17,34 @@ CLASS_NAMES = [
     'P','Q','R','S','T','U','V','W','X','Y','Z',
 ]
 
-# Preprocessing
-def preprocess_image(image_path, target_size=(128, 128)):
-    img = cv2.imread(image_path)  # BGR
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # RGB
+# Preprocess frame
+def preprocess_frame(frame, target_size=(128,128)):
+    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, target_size)
     img = img.astype("float32") / 255.0
-    img = np.expand_dims(img, axis=0)  # (1,128,128,3)
+    img = np.expand_dims(img, axis=0)
     return img
 
-# Test prediction
-image_path = "A_test.jpg"  # replace with one test image
-img = preprocess_image(image_path)
-pred = model.predict(img, verbose=0)
+# Video file path
+VIDEO_PATH = "test.mp4"
 
-pred_class = np.argmax(pred, axis=1)[0]
-print("Predicted class:", CLASS_NAMES[pred_class])
-print("Raw prediction scores:", pred)
+cap = cv2.VideoCapture(VIDEO_PATH)
+if not cap.isOpened():
+    raise ValueError(f"Error opening video file {VIDEO_PATH}")
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Preprocess & predict
+    img = preprocess_frame(frame)
+    pred = model.predict(img, verbose=0)
+    pred_class = np.argmax(pred, axis=1)[0]
+    pred_label = CLASS_NAMES[pred_class]
+
+    # Print predictions
+    print("Predicted class:", pred_label)
+
+cap.release()
+print("✅ Video processing complete.")
