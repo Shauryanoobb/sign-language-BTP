@@ -1,4 +1,4 @@
-# Use official Python base image (slim to keep it light)
+# Base image
 FROM python:3.10-slim
 
 # Set working directory
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 # Upgrade pip
 RUN pip install --upgrade pip
 
-# Install required Python packages
+# Install Python packages
 RUN pip install --no-cache-dir \
     tensorflow==2.19.0 \
     opencv-python-headless==4.9.0.80 \
@@ -23,8 +23,11 @@ RUN pip install --no-cache-dir \
     mediapipe==0.10.18 \
     pillow
 
-# Copy project files into the container
+# Copy all project files
 COPY . .
+
+# Create output folder
+RUN mkdir -p output_frames
 
 # Default command
 CMD ["python", "main.py"]

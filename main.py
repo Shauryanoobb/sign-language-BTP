@@ -2,7 +2,6 @@ import tensorflow as tf
 import cv2
 import numpy as np
 import os
-import time
 
 # Path to your trained model
 MODEL_PATH = "tinyvit_student_final_synthetic.keras"
@@ -23,49 +22,55 @@ CLASS_NAMES = [
 def preprocess_frame(frame, target_size=(128,128)):
     img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, target_size)
-    #img = img.astype("float32") / 255.0
+    img = img.astype("float32") #check whether /255.0 is needed
     img = np.expand_dims(img, axis=0)
     return img
 
-# Create output folder
-OUTPUT_DIR = "output_frames"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-# Video file path (replace with your webcam later if needed)
-VIDEO_PATH = "test.mp4"
+# Video file path
+VIDEO_PATH = "test1.mp4"  # or 0 for webcam
 cap = cv2.VideoCapture(VIDEO_PATH)
 if not cap.isOpened():
     raise ValueError(f"Error opening video file {VIDEO_PATH}")
 
+# VideoWriter setup
+fps = cap.get(cv2.CAP_PROP_FPS) or 20  # fallback if FPS not detected
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+output_video_path = "output.mp4"
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # compatible with macOS
+out = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
+
 frame_count = 0
-predict_every_n_frames = 5  # throttle predictions to every 5 frames
+predict_every_n_frames = 5
+last_pred_label = None
 
 while True:
     ret, frame = cap.read()
     if not ret:
         break
 
-    # Predict only every N frames
+    # Predict every N frames
     if frame_count % predict_every_n_frames == 0:
         img_input = preprocess_frame(frame)
         pred = model.predict(img_input, verbose=0)
         pred_class = np.argmax(pred, axis=1)[0]
         pred_label = CLASS_NAMES[pred_class]
+        if pred_label != last_pred_label:
+            last_pred_label = pred_label
     else:
-        pred_label = None  # keep last prediction if needed
+        pred_label = last_pred_label
 
-    # Draw bounding box and label
+    # Draw bounding box + label
     if pred_label:
         h, w, _ = frame.shape
         cv2.rectangle(frame, (10,10), (w-10, h-10), (0,255,0), 2)
         cv2.putText(frame, f"Prediction: {pred_label}", (20,50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 3)
 
-    # Save frame
-    frame_filename = os.path.join(OUTPUT_DIR, f"frame_{frame_count:04d}.jpg")
-    cv2.imwrite(frame_filename, frame)
-
+    # Write frame to video
+    out.write(frame)
     frame_count += 1
 
 cap.release()
-print(f"✅ Video processing complete. Frames saved in {OUTPUT_DIR}")
+out.release()
+print(f"✅ Video processing complete. Output saved at {output_video_path}")
