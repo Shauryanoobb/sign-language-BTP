@@ -1,26 +1,33 @@
-# Use official Python base image (slim to keep it light)
+# Base image
 FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for OpenCV
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
+    ffmpeg \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install required Python packages
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Install Python packages
 RUN pip install --no-cache-dir \
     tensorflow==2.19.0 \
     opencv-python-headless==4.9.0.80 \
-    numpy==1.26.4
+    numpy==1.26.4 \
+    mediapipe==0.10.18 \
+    pillow
 
-# Copy model and code into container
-COPY tinyvit_student_final_synthetic.keras .
-COPY main.py .
-COPY A_test.jpg .
+# Copy all project files
+COPY . .
 
-# Run the script
+# Create output folder
+RUN mkdir -p output_frames
+
+# Default command
 CMD ["python", "main.py"]
-
