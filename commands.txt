@@ -1,0 +1,8 @@
+these commands are for you nano noob
+you need keras 2.19.0
+
+for that run
+pip install --upgrade pip 
+pip install tensorflow==2.19
+pip install "numpy<2.0" --upgrade --force-reinstall
+and then run python main.py
