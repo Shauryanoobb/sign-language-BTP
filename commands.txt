@@ -6,3 +6,8 @@ pip install --upgrade pip
 pip install tensorflow==2.19
 pip install "numpy<2.0" --upgrade --force-reinstall
 and then run python main.py
+
+
+docker commands
+docker build -t asl-tflite-test .                 
+docker run --rm -it -v $(pwd):/app asl-tflite-test
