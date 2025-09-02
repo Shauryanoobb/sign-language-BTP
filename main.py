@@ -22,12 +22,12 @@ def preprocess_image(image_path, target_size=(128, 128)):
     img = cv2.imread(image_path)  # BGR
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # RGB
     img = cv2.resize(img, target_size)
-    img = img.astype("float32") / 255.0
+    img = img.astype("float32") #/ 255.0
     img = np.expand_dims(img, axis=0)  # (1,128,128,3)
     return img
 
 # Test prediction
-image_path = "A_test.jpg"  # replace with one test image
+image_path = "Dtest.png"  # replace with one test image
 img = preprocess_image(image_path)
 pred = model.predict(img, verbose=0)
 
