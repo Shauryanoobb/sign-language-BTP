@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir \
 
 # Copy model and code into container
 COPY main.py .
-COPY A_test.jpg .
+COPY z.png .
 
 # Run the script
 CMD ["python", "main.py"]
