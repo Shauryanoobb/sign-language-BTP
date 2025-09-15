@@ -29,7 +29,7 @@ def preprocess_image(image_path, target_size=(128,128)):
     return img
 
 # Test with single image
-image_path = "A_test.jpg"
+image_path = "z.png"
 img = preprocess_image(image_path)
 
 # Run inference
