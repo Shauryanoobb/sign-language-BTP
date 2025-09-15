@@ -11,3 +11,12 @@ and then run python main.py
 docker commands
 docker build -t asl-tflite-test .                 
 docker run --rm -it -v $(pwd):/app asl-tflite-test
+
+craete virtual env
+for running on rasberry pi ensure these versions
+Python 3.11.2
+NumPy version: 1.26.4
+OpenCV version: 4.9.0
+tensor flow lite 2.14.0
+
+model used asl_model.tflite on rasberry branch (DO NOT TOUCH IT!!!!)
