@@ -17,9 +17,8 @@ RUN pip install --no-cache-dir \
     numpy==1.26.4
 
 # Copy model and code into container
-COPY tinyvit_student_final_synthetic.keras .
 COPY main.py .
-COPY A_test.jpg .
+COPY z.png .
 
 # Run the script
 CMD ["python", "main.py"]
