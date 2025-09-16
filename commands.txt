@@ -1,18 +1,11 @@
-these commands are for you nano noob
-you need keras 2.19.0
-
-for that run
-pip install --upgrade pip 
-pip install tensorflow==2.19
-pip install "numpy<2.0" --upgrade --force-reinstall
-and then run python main.py
-
-
-docker commands
+docker commands to get the tflite model from keras model
 docker build -t asl-tflite-test .                 
 docker run --rm -it -v $(pwd):/app asl-tflite-test
 
+
+to run on rasberry
 craete virtual env
+source ~/asl_env/bin/activate
 for running on rasberry pi ensure these versions
 Python 3.11.2
 NumPy version: 1.26.4
