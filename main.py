@@ -3,7 +3,7 @@ import numpy as np
 import tflite_runtime.interpreter as tflite
 
 # Path to TFLite model
-MODEL_PATH = "asl_model.tflite"
+MODEL_PATH = "mobilenetv2_signlang_synthetic_14_signs (1).tflite"
 
 # Load TFLite model
 interpreter = tflite.Interpreter(model_path=MODEL_PATH)
