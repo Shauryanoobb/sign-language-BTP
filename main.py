@@ -27,7 +27,7 @@ def preprocess_image(image_path, target_size=(128, 128)):
     return img
 
 # Test prediction
-image_path = "Dtest.png"  # replace with one test image
+image_path = "Ytest.png"  # replace with one test image
 img = preprocess_image(image_path)
 pred = model.predict(img, verbose=0)
 

@@ -6,16 +6,16 @@ from keras_vision.MobileViT_v1 import build_MobileViT_v1
 from tensorflow.keras import layers, Model
 
 # Path to your trained model
-MODEL_PATH = "mobilevit_signlang_synthetic.keras"
+MODEL_PATH = "mobilenetv2_mendeley_13signs.keras"
 TEST_FOLDER = "live_testing"
 
 # Load model
-# # 1️⃣ Rebuild the architecture exactly as before
-# backbone = build_MobileViT_v1(model_type="XS", pretrained=False, include_top=False, num_classes=0)
+# 1️⃣ Rebuild the architecture exactly as before
+# backbone = build_MobileViT_v1(model_type="XXS", pretrained=False, include_top=False, num_classes=0)
 
 # x = backbone.output
 # x = layers.GlobalAveragePooling2D()(x)
-# x = layers.Dense(26, activation='softmax')(x)  # 26 ASL classes
+# x = layers.Dense(14, activation='softmax')(x)  # 26 ASL classes
 
 # model = Model(inputs=backbone.input, outputs=x)
 
@@ -24,17 +24,14 @@ TEST_FOLDER = "live_testing"
 # model(dummy_input)  # ensures all layers have weights
 
 # # 3️⃣ Load weights from your trained file
-# model.load_weights("MobileVit-XS-ASL.keras")
+# model.load_weights(MODEL_PATH)
 model = tf.keras.models.load_model(MODEL_PATH)
 model.trainable = False
 num_classes = model.output_shape[-1]
 print("✅ Model loaded. Num classes:", num_classes)
 
-# ASL class labels (29 total)
-CLASS_NAMES = [
-    'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O',
-    'P','Q','R','S','T','U','V','W','X','Y','Z',
-]
+# ASL class labels (14 total)
+CLASS_NAMES = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'R', 'X']
 
 # Preprocessing
 def preprocess_image(image_path, target_size=(128, 128)):
