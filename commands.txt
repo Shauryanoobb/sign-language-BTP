@@ -13,3 +13,7 @@ OpenCV version: 4.9.0
 tensor flow lite 2.14.0
 
 model used asl_model.tflite on rasberry branch (DO NOT TOUCH IT!!!!)
+
+
+to run webcam on pi, run serverForWebcam using virtual env on mac
+and run webcamClientPi on rasberry Pi on virtual env, no additional stuff needed
