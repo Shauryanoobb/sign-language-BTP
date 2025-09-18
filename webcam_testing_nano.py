@@ -1,11 +1,12 @@
 import cv2
 import numpy as np
 import tensorflow as tf
+import string
 
 # -----------------------------
 # Load your trained model
 # -----------------------------
-MODEL_PATH = "mobilenetv2_mendeley_13signs.keras"
+MODEL_PATH = "mobilenetv2_mendeley_26signs_augmented.keras"
 model = tf.keras.models.load_model(MODEL_PATH)
 model.trainable = False
 num_classes = model.output_shape[-1]
@@ -13,7 +14,8 @@ num_classes = model.output_shape[-1]
 print("✅ Model loaded. Num classes:", num_classes)
 
 # ASL class labels (make sure order matches training)
-CLASS_NAMES = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'R', 'X']
+# CLASS_NAMES = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'R', 'X']
+CLASS_NAMES = list(string.ascii_uppercase)
 
 # -----------------------------
 # Preprocessing function
