@@ -63,9 +63,7 @@ while True:
     print(f"Prediction: {CLASS_NAMES[pred_class]} ({confidence:.2f})")
 
     # Optional: show video feed
-    cv2.imshow("Pi Stream", frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+   # cv2.imshow("Pi Stream", frame
 
 cap.release()
 cv2.destroyAllWindows()
