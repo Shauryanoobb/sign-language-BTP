@@ -4,20 +4,24 @@ import socket
 import struct
 import tflite_runtime.interpreter as tflite
 
+# -------------------------
 # Model setup
+# -------------------------
 MODEL_PATH = "mobilenetv2_mendeley_26signs_augmented.tflite"
 interpreter = tflite.Interpreter(model_path=MODEL_PATH)
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
-input_shape = input_details[0]['shape'][1:3]
+input_shape = input_details[0]['shape'][1:3]  # (H, W)
 
 CLASS_NAMES = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
+# -------------------------
+# Sockets
+# -------------------------
 VIDEO_PORT = 6000
 PRED_PORT  = 5005
 
-# TCP socket for video
 sock_video = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock_video.bind(("0.0.0.0", VIDEO_PORT))
 sock_video.listen(1)
@@ -27,6 +31,12 @@ conn, addr = sock_video.accept()
 print("✅ Connected to Mac")
 
 sock_pred = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# -------------------------
+# Bounding box definition
+# -------------------------
+# (x, y, w, h) = top-left and size of ROI
+ROI = (150, 50, 300, 300)   # adjust based on your camera view
 
 while True:
     # Receive 4-byte length prefix
@@ -47,8 +57,12 @@ while True:
     if frame is None:
         continue
 
+    # Crop ROI (hand bounding box)
+    x, y, w, h = ROI
+    hand_roi = frame[y:y+h, x:x+w]
+
     # Preprocess
-    img = cv2.resize(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), tuple(input_shape))
+    img = cv2.resize(cv2.cvtColor(hand_roi, cv2.COLOR_BGR2RGB), tuple(input_shape))
     img = img.astype("float32")
     img = np.expand_dims(img, axis=0)
 
@@ -62,7 +76,7 @@ while True:
     pred_text = f"{CLASS_NAMES[pred_class]} ({confidence:.2f})"
     print(pred_text)
 
-    # Send prediction back (UDP)
+    # Send prediction back
     sock_pred.sendto(pred_text.encode(), (addr[0], PRED_PORT))
 
 conn.close()
