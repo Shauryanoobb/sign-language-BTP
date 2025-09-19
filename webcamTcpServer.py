@@ -27,12 +27,19 @@ threading.Thread(target=listen_predictions, daemon=True).start()
 # -------------------------
 # Bounding box
 # -------------------------
-ROI = (150, 50, 300, 300)  # must match Pi side
+# ROI = (150, 50, 300, 300)  # must match Pi side
+
+
 FRAME_SKIP = 3             # send 1 in 3 frames
 
 cap = cv2.VideoCapture(0)
 frame_count = 0
-
+frame_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+frame_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+roi_size = int(0.6 * frame_w)   # square box size
+x = (frame_w - roi_size) // 2   # left aligned to center
+y = (frame_h - roi_size) // 2   # top aligned to center
+ROI = (x, y, roi_size, roi_size)
 while True:
     ret, frame = cap.read()
     if not ret:

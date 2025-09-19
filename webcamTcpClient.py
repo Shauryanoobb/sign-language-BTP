@@ -32,12 +32,6 @@ print("✅ Connected to Mac")
 
 sock_pred = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# -------------------------
-# Bounding box definition
-# -------------------------
-# (x, y, w, h) = top-left and size of ROI
-ROI = (150, 50, 300, 300)   # adjust based on your camera view
-
 while True:
     # Receive 4-byte length prefix
     raw_len = conn.recv(4)
@@ -53,16 +47,13 @@ while True:
             break
         data += packet
 
+    # Decode frame (already ROI from Mac)
     frame = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
     if frame is None:
         continue
 
-    # Crop ROI (hand bounding box)
-    x, y, w, h = ROI
-    hand_roi = frame[y:y+h, x:x+w]
-
     # Preprocess
-    img = cv2.resize(cv2.cvtColor(hand_roi, cv2.COLOR_BGR2RGB), tuple(input_shape))
+    img = cv2.resize(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), tuple(input_shape))
     img = img.astype("float32")
     img = np.expand_dims(img, axis=0)
 
