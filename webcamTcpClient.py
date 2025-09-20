@@ -7,7 +7,7 @@ import tflite_runtime.interpreter as tflite
 # -------------------------
 # Model setup
 # -------------------------
-MODEL_PATH = "mobilenetv2_mendeley_26signs_augmented.tflite"
+MODEL_PATH = "models/mobilenetv2_mendeley_24signs_augmented.tflite"
 interpreter = tflite.Interpreter(model_path=MODEL_PATH)
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()

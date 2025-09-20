@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 # Load your trained .keras model
-model = tf.keras.models.load_model("mobilenetv2_mendeley_26signs_augmented.keras")
+model = tf.keras.models.load_model("models/mobilenetv2_mendeley_24signs_augmented.keras")
 
 # Create converter
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
@@ -13,7 +13,7 @@ converter.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_model = converter.convert()
 
 # Save quantized model
-with open("mobilenetv2_mendeley_26signs_augmented_quant.tflite", "wb") as f:
+with open("models/mobilenetv2_mendeley_24signs_augmented.tflite", "wb") as f:
     f.write(tflite_model)
 
-print("Quantized model saved: mobilenetv2_mendeley_26signs_augmented_quant.tflite")
+print("Quantized model saved")

@@ -1,4 +1,4 @@
-docker commands to get the tflite model from keras model
+docker commands to get the tflite (or quantised) model from keras model
 docker build -t asl-tflite-test .                 
 docker run --rm -it -v $(pwd):/app asl-tflite-test
 
