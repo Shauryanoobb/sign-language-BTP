@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy your code last
 COPY . .
 
-CMD ["python", "quantiseFromKeras.py"]
+CMD ["python", "getTFliteQuantised.py"]

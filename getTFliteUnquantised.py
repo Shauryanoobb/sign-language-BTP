@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 # Load the model
-model = tf.keras.models.load_model("mobilenetv2_signlang_synthetic_14_signs.keras")
+model = tf.keras.models.load_model("models/mobilenetv2_signlang_synthetic_14_signs.keras")
 
 # Convert to TFLite
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
