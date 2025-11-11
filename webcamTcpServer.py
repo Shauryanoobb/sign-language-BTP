@@ -4,7 +4,7 @@ import struct
 import threading
 import time
 
-PI_IP   = "10.72.225.192"  # change according to location
+PI_IP   = "10.133.118.191"  # change according to location
 PI_PORT = 6000
 MAC_PORT = 5005
 

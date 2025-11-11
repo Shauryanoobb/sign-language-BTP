@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 import socket
 import struct
-import tflite_runtime.interpreter as tflite
+import tensorflow as tf
 
 # -------------------------
 # Model setup
 # -------------------------
-MODEL_PATH = "models/mobilenetv2_mendeley_26signs_augmented_quant.tflite"
-interpreter = tflite.Interpreter(model_path=MODEL_PATH)
+MODEL_PATH = "models/mobilevit_asl_dynamic.tflite"
+interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
