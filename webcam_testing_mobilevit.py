@@ -1,24 +1,62 @@
 import cv2
 import numpy as np
 import tensorflow as tf
+import string
+from keras_vision.MobileViT_v1 import build_MobileViT_v1
+from tensorflow.keras import layers, Model
 
 # -----------------------------
 # Load your trained model
 # -----------------------------
-MODEL_PATH = "models/mobilenetv2_mendeley_13signs.keras"
-model = tf.keras.models.load_model(MODEL_PATH)
+# 1️⃣ Rebuild the architecture exactly as before
+# 1️⃣ Build MobileViT backbone (no classification head)
+backbone = build_MobileViT_v1(
+    model_type="XXS",
+    pretrained=False,
+    include_top=False,
+    num_classes=0
+)
+
+# 2️⃣ Define normalization and augmentation
+normalization_layer = layers.Rescaling(1./255)
+
+data_augmentation = tf.keras.Sequential([
+    layers.RandomTranslation(0.05, 0.05),  # hand not centered
+    layers.RandomRotation(0.05),           # slight tilt ±5°
+])
+
+# 3️⃣ Build the full model with augmentation + normalization
+inputs = layers.Input(shape=(256, 256, 3))
+x = normalization_layer(inputs)
+x = data_augmentation(x)
+x = backbone(x)  # feed into MobileViT backbone
+x = layers.GlobalAveragePooling2D()(x)
+x = layers.Dense(26, activation='softmax')(x)  # 26 ASL classes
+model = Model(inputs, outputs=x, name="MobileViT_ASL")
+
+# 4️⃣ Build the model by passing a dummy input (important before loading weights)
+dummy_input = tf.random.uniform((1, 256, 256, 3))
+model(dummy_input)  # ensures all layers are initialized
+
+# 5️⃣ Load weights
+MODEL_PATH = "MobileVit-XXS-ASL-Augmented-TRUE-Mendeley.keras"
+model.load_weights(MODEL_PATH)
+
+
+# model = tf.keras.models.load_model(MODEL_PATH)
 model.trainable = False
 num_classes = model.output_shape[-1]
 
 print("✅ Model loaded. Num classes:", num_classes)
 
 # ASL class labels (make sure order matches training)
-CLASS_NAMES = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'R', 'X']
+# CLASS_NAMES = ['A', 'B', 'C', 'D', 'E','F', 'G', 'H', 'I', 'K', 'L', 'M','N','O','P','Q','R','S','T','U','V','W','X','Y']
+CLASS_NAMES = list(string.ascii_uppercase)
 
 # -----------------------------
 # Preprocessing function
 # -----------------------------
-def preprocess_frame(frame, target_size=(128, 128)):
+def preprocess_frame(frame, target_size=(256, 256)):
     img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)   # Convert to RGB
     img = cv2.resize(img, target_size)             # Resize to model input
     img = img.astype("float32")                    # Convert to float
@@ -54,7 +92,7 @@ while True:
 
     if hand_region.shape[0] > 0 and hand_region.shape[1] > 0:
         # Preprocess
-        img = preprocess_frame(hand_region, target_size=(128, 128))
+        img = preprocess_frame(hand_region, target_size=(256, 256))
 
         # Predict
         pred = model.predict(img, verbose=0)
