@@ -1,4 +1,3 @@
-#to get the .tflite model
 import tensorflow as tf
 
 # Load the model
