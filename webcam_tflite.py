@@ -4,28 +4,30 @@ import tensorflow as tf
 import string
 
 # -----------------------------
-# Load your trained model
+# Load TFLite model
 # -----------------------------
+TFLITE_MODEL_PATH = "mobilevit_asl_dynamic.tflite"
 
-MODEL_PATH = "mobilenetv2_mendeley_26signs_augmented.keras"
-model = tf.keras.models.load_model(MODEL_PATH)
-model.trainable = False
-num_classes = model.output_shape[-1]
+interpreter = tf.lite.Interpreter(model_path=TFLITE_MODEL_PATH)
+interpreter.allocate_tensors()
 
-print("✅ Model loaded. Num classes:", num_classes)
+# Get input & output details
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
-# ASL class labels (make sure order matches training)
-# CLASS_NAMES = ['A', 'B', 'C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'R', 'X']
+print("✅ TFLite model loaded")
+
+# ASL class labels (A-Z)
 CLASS_NAMES = list(string.ascii_uppercase)
 
 # -----------------------------
 # Preprocessing function
 # -----------------------------
-def preprocess_frame(frame, target_size=(128, 128)):
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)   # Convert to RGB
-    img = cv2.resize(img, target_size)             # Resize to model input
-    img = img.astype("float32")                    # Convert to float
-    img = np.expand_dims(img, axis=0)              # Add batch dim
+def preprocess_frame(frame, target_size=(256, 256)):
+    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR → RGB
+    img = cv2.resize(img, target_size)            # resize
+    img = img.astype("float32")                   # convert to float
+    img = np.expand_dims(img, axis=0)             # add batch dim
     return img
 
 # -----------------------------
@@ -57,10 +59,16 @@ while True:
 
     if hand_region.shape[0] > 0 and hand_region.shape[1] > 0:
         # Preprocess
-        img = preprocess_frame(hand_region, target_size=(128, 128))
+        img = preprocess_frame(hand_region, target_size=(256, 256))
 
-        # Predict
-        pred = model.predict(img, verbose=0)
+        # Set input tensor
+        interpreter.set_tensor(input_details[0]['index'], img)
+
+        # Run inference
+        interpreter.invoke()
+
+        # Get prediction
+        pred = interpreter.get_tensor(output_details[0]['index'])
         pred_class = np.argmax(pred, axis=1)[0]
         confidence = np.max(pred)
 
@@ -69,13 +77,12 @@ while True:
         cv2.putText(frame, text, (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-    # Show the frame
-    cv2.imshow("ASL Live Testing", frame)
+    # Show frame
+    cv2.imshow("ASL Live Testing - TFLite", frame)
 
-    # Press 'q' to exit
+    # Quit key
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Cleanup
 cap.release()
 cv2.destroyAllWindows()
