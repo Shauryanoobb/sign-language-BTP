@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # Path to your trained model
-MODEL_PATH = "tinyvit_student_final_synthetic.keras"
+MODEL_PATH = "models/tinyvit_student_final_synthetic.keras"
 
 # Load model
 model = tf.keras.models.load_model(MODEL_PATH)

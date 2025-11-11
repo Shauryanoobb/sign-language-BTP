@@ -6,7 +6,7 @@ from keras_vision.MobileViT_v1 import build_MobileViT_v1
 from tensorflow.keras import layers, Model
 
 # Path to your trained model
-MODEL_PATH = "mobilenetv2_mendeley_13signs.keras"
+MODEL_PATH = "models/mobilenetv2_mendeley_13signs.keras"
 TEST_FOLDER = "live_testing"
 
 # Load model

@@ -5,7 +5,7 @@ import tensorflow as tf
 # -----------------------------
 # Load your trained model
 # -----------------------------
-MODEL_PATH = "mobilenetv2_mendeley_13signs.keras"
+MODEL_PATH = "models/mobilenetv2_mendeley_13signs.keras"
 model = tf.keras.models.load_model(MODEL_PATH)
 model.trainable = False
 num_classes = model.output_shape[-1]
