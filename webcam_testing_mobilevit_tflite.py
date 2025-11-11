@@ -5,7 +5,7 @@ import string
 
 # -----------------------------
 # Load TFLite model
-# -----------------------------
+# -----------------------------q
 TFLITE_MODEL_PATH = "mobilevit_asl_dynamic.tflite"  # change filename as needed
 
 interpreter = tf.lite.Interpreter(model_path=TFLITE_MODEL_PATH)

@@ -9,21 +9,39 @@ from tensorflow.keras import layers, Model
 # Load your trained model
 # -----------------------------
 # 1️⃣ Rebuild the architecture exactly as before
-backbone = build_MobileViT_v1(model_type="XXS", pretrained=False, include_top=False, num_classes=0)
+# 1️⃣ Build MobileViT backbone (no classification head)
+backbone = build_MobileViT_v1(
+    model_type="XXS",
+    pretrained=False,
+    include_top=False,
+    num_classes=0
+)
 
-x = backbone.output
+# 2️⃣ Define normalization and augmentation
+normalization_layer = layers.Rescaling(1./255)
+
+data_augmentation = tf.keras.Sequential([
+    layers.RandomTranslation(0.05, 0.05),  # hand not centered
+    layers.RandomRotation(0.05),           # slight tilt ±5°
+])
+
+# 3️⃣ Build the full model with augmentation + normalization
+inputs = layers.Input(shape=(256, 256, 3))
+x = normalization_layer(inputs)
+x = data_augmentation(x)
+x = backbone(x)  # feed into MobileViT backbone
 x = layers.GlobalAveragePooling2D()(x)
 x = layers.Dense(26, activation='softmax')(x)  # 26 ASL classes
+model = Model(inputs, outputs=x, name="MobileViT_ASL")
 
-model = Model(inputs=backbone.input, outputs=x)
-
-# 2️⃣ Build the model by passing a dummy input
+# 4️⃣ Build the model by passing a dummy input (important before loading weights)
 dummy_input = tf.random.uniform((1, 256, 256, 3))
-model(dummy_input)  # ensures all layers have weights
+model(dummy_input)  # ensures all layers are initialized
 
-# 3️⃣ Load weights from your trained file
-MODEL_PATH = "MobileVit-XXS-ASL-Augmented-Mendeley.keras"
+# 5️⃣ Load weights
+MODEL_PATH = "MobileVit-XXS-ASL-Augmented-TRUE-Mendeley.keras"
 model.load_weights(MODEL_PATH)
+
 
 # model = tf.keras.models.load_model(MODEL_PATH)
 model.trainable = False
