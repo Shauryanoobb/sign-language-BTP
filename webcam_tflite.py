@@ -6,7 +6,7 @@ import string
 # -----------------------------
 # Load TFLite model
 # -----------------------------
-TFLITE_MODEL_PATH = "mobilevit_asl_dynamic.tflite"
+TFLITE_MODEL_PATH = "models/mobilevit_asl_dynamic.tflite"
 
 interpreter = tf.lite.Interpreter(model_path=TFLITE_MODEL_PATH)
 interpreter.allocate_tensors()
