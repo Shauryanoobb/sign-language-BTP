@@ -14,7 +14,7 @@ FRAME_SKIP = 4          # Send every Nth frame for optimal latency
 JPEG_QUALITY = 50       # Balance quality and bandwidth
 MAX_PACKET_SIZE = 1472  # MTU-safe UDP payload
 
-ROI_SCALE = 0.28        # ROI size as fraction of frame width
+ROI_SCALE = 0.35        # ROI size as fraction of frame width
 
 # -------------------------
 # Global State
